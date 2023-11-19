@@ -12,7 +12,7 @@ const translateRus = {
     "worms": "черви",
     "peaks": "пики",
     "baby": "буби",
-    "vinnie": "вини",
+    "kresti": "крести",
     "valet": "валет",
     "dama": "дама",
     "king": "король",
@@ -40,12 +40,12 @@ function getRandom(min, max) {
 // перезапуск колоды
 function resetColoda() {
     coloda = []
-    // worms - черви, peaks - пики, baby - буби, vinnie - вини
+    // worms - черви, peaks - пики, baby - буби, kresti - крести
     const cards = {
         "worms": [],
         "peaks": [],
         "baby": [],
-        "vinnie": [],
+        "kresti": [],
     }
     // выбор масти
     for (const key in cards) {
@@ -91,7 +91,7 @@ function getDataCard(card) {
         nameValue = translateRus[card.value]
     }
 
-    return [translateRus[card.mast], value, nameValue]
+    return [card.mast, value, nameValue]
 }
 
 // получить одну карту из колоды
@@ -120,16 +120,26 @@ function resetGame() {
 
 // проигрыш
 function iLose() {
-    isStart= false
+    isStart = false
 
     if (myMoney <= 0) {
         alert("Вы проиграли все деньги, мы вам дали в долг 1000")
         myMoney = 1000
     }
-    
+
     myMoney_html.innerHTML = myMoney
     con.removeAttribute("readonly", true)
     fixCon.style.backgroundColor = "white"
+}
+
+// отрисовка карты
+function renderCard(hand, mast, nameValue) {
+    console.log(mast);
+    hand.insertAdjacentHTML("beforeend", `<div class="card">
+    <img class="img1" src="./imgs/${mast}.png">
+    <img class="img2" src="./imgs/${mast}.png">
+    <p>${nameValue}</p>
+    </div>`)
 }
 
 // получить карту в свою руку
@@ -147,7 +157,7 @@ function getMyHand() {
     }
 
     myPoints_html.innerHTML = myPoints
-    myHand.insertAdjacentHTML("beforeend", `<li>${mast}-${nameValue}</li>`)
+    renderCard(myHand, mast, nameValue)
 }
 
 // клик на "Взять карту"
@@ -161,6 +171,11 @@ getCard.addEventListener('click', () => {
 
 // клик на "Поставить"
 fixCon.addEventListener('click', () => {
+    if (con.value < 1) {
+        alert("Минимальная ставка 1 рубль")
+        return
+    }
+
     if (con.value > myMoney) {
         alert("Недостаточно денег")
         return
@@ -192,7 +207,7 @@ stop.addEventListener("click", () => {
         botPoints += value
 
         botPoints_html.innerHTML = botPoints
-        botHand.insertAdjacentHTML("beforeend", `<li>${mast}-${nameValue}</li>`)
+        renderCard(botHand, mast, nameValue)
     }
 
     if (botPoints > 21) {
