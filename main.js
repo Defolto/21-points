@@ -9,10 +9,6 @@ const con = document.getElementById("con")
 const fixCon = document.getElementById("fixCon")
 
 const translateRus = {
-    "worms": "черви",
-    "peaks": "пики",
-    "baby": "буби",
-    "kresti": "крести",
     "valet": "валет",
     "dama": "дама",
     "king": "король",
