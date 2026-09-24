@@ -33,6 +33,14 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// перемешивание массива (Фишер–Йейтс)
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = getRandom(0, i);
+        [arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+}
+
 // перезапуск колоды
 function resetColoda() {
     coloda = []
@@ -68,11 +76,10 @@ function resetColoda() {
             value: "tyz"
         })
 
-        cards[key].sort(() => getRandom(-1, 0))
         coloda.push(...cards[key])
     }
 
-    coloda.sort(() => getRandom(-1, 0)).sort(() => getRandom(-1, 0))
+    shuffle(coloda)
 }
 
 // получить информацию о карте (название на русском, значение, исходное название)
@@ -108,7 +115,7 @@ function resetGame() {
     botPoints = 0
     botPoints_html.innerHTML = botPoints
     myHand.innerHTML = ''
-    botHand.innerHTML = ''
+    botHand_html.innerHTML = ''
     isStart = false
 
     resetColoda()
@@ -145,15 +152,17 @@ function getMyHand() {
     const [mast, value, nameValue] = getDataCard(card)
     myPoints += value
 
-    if (myPoints > 21) {
-        alert("Перебор")
-        myMoney -= +con.value
-        iLose()
-        return
-    }
-
     myPoints_html.innerHTML = myPoints
     renderCard(myHand, mast, nameValue)
+
+    if (myPoints > 21) {
+        setTimeout(() => {
+            alert("Перебор")
+        }, 10);
+
+        myMoney -= +con.value
+        iLose()
+    }
 }
 
 // клик на "Взять карту"
@@ -197,7 +206,7 @@ stop.addEventListener("click", () => {
         return
     }
 
-    while (botPoints <= myPoints && botPoints <= 21) {
+    while (botPoints < myPoints) {
         const card = getOneCard()
         const [mast, value, nameValue] = getDataCard(card)
         botPoints += value
@@ -212,6 +221,10 @@ stop.addEventListener("click", () => {
         }, 10);
 
         myMoney += +con.value
+    } else if (botPoints == myPoints) {
+        setTimeout(() => {
+            alert("Ничья")
+        }, 10);
     } else {
         setTimeout(() => {
             alert("Проигрыш")
